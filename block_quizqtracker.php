@@ -16,7 +16,7 @@
 
 /**
  * Main interface to Question Tracker
- * 
+ *
  * Provides block for registering question issues for quiz module
  *
  * @package     block_quizqtracker
@@ -29,34 +29,21 @@ use \local_qtracker\output\issue_registration_block;
 
 defined('MOODLE_INTERNAL') || die();
 
-class block_quizqtracker extends block_base
-{
-    public function init()
-    {
+class block_quizqtracker extends block_base {
+    public function init() {
         $this->title = get_string('quizqtracker_quiz', 'block_quizqtracker');
     }
-    // The PHP tag and the curly bracket for the class definition 
-    // will only be closed after there is another function added in the next section.
 
-    public function instance_allow_multiple()
-    {
-        return true;
-    }
-
-    public function applicable_formats()
-    {
+    public function applicable_formats() {
         return array('all' => false, 'mod-quiz' => true);
-
     }
 
-    function has_config()
-    {
+    function has_config() {
         return true;
     }
 
-    function get_content()
-    {
-        global $CFG, $OUTPUT, $USER, $PAGE;
+    function get_content() {
+        global $USER, $PAGE, $COURSE;
 
         if ($this->content !== null) {
             return $this->content;
@@ -73,7 +60,18 @@ class block_quizqtracker extends block_base
         $this->content->text = '';
         $this->content->footer = '';
 
-        // user/index.php expect course context, so get one if page has module context.
+        // Get submitted parameters.
+        $attemptid = optional_param('attempt', null, PARAM_INT);
+        $page = optional_param('page', 0, PARAM_INT);
+        $cmid = optional_param('cmid', null, PARAM_INT);
+
+        if (!isset($attemptid)) {
+            // Not in an active attempt.
+            $url = new moodle_url('/local/qtracker/view.php', array('courseid' => $COURSE->id));
+            $this->content->text = html_writer::link($url, "View issues...");
+            return $this->content;
+        }
+
         $currentcontext = $this->page->context->get_course_context(false);
         if (!empty($this->config->text)) {
             $this->content->text = $this->config->text;
@@ -87,68 +85,28 @@ class block_quizqtracker extends block_base
             $this->content->text .= "site context";
         }
 
-        if (!empty($this->config->text)) {
+        if (isset($this->config->text)) {
             $this->content->text = $this->config->text;
+        } else {
+            $this->content->text = html_writer::tag('p', get_string('question_problem_details', 'block_quizqtracker'));
         }
 
-        /*echo '<br><br><br><br><br>';
-        echo '<pre>';
-        //print_r($this->page->context);
-
-        //print_r($this->page->context);
-        echo '<br><br>';
-        //print_r($currentcontext);
-
-*/
         $this->userid = $USER->id;
 
-        // Get submitted parameters.
-        $attemptid = optional_param('attempt', null, PARAM_INT);
-        $page = optional_param('page', 0, PARAM_INT);
-        $cmid = optional_param('cmid', null, PARAM_INT);
-
-/* 
-        echo '<br>';
-        //print_r($attemptid);
-        echo '<br>';
-        //print_r($cmid);
-        echo '<br>';
-        //print_r($page); */
-
-        //$OUTPUT->get_plugin_renderer('block_quizqtracker');
-        $questions = [];
         if (!is_null($attemptid)) {
             $attemptobj = quiz_create_attempt_handling_errors($attemptid, $cmid);
             $slots = $attemptobj->get_slots($page);
-            //print_r($slots);
-            $qattempt = question_engine::load_questions_usage_by_activity($attemptobj->get_attempt()->uniqueid);
-
-            foreach ($slots as $slot) {
-                //print_r($qattempt->get_question($slot)->name);
-                //print_r(":");
-                $qname = $qattempt->get_question($slot)->name;
-                $this->content->text .= html_writer::tag('div', $qname);
-
-                $question = $qattempt->get_question($slot);
-                array_push($questions, $question);
-            }
+            $quba = question_engine::load_questions_usage_by_activity($attemptobj->get_attempt()->uniqueid);
         }
-        
+
         $renderer = $this->page->get_renderer('local_qtracker');
-        $templatable = new issue_registration_block($questions, $USER->id);
-        $this->content->text .= $renderer->render($templatable);
+        $context = $PAGE->context;
+        $templatable = new issue_registration_block($quba, $slots, $context->id);
+        $this->content->text .= $renderer->render_block($templatable);
 
-        //quiz_get_user_attempts()
-        // $quba = \question_engine::load_questions_usage_by_activity(512);
-        // $slots = $quba->get_slots();
-        // $latestslot = end($slots);
-        // //print_r($latestslot);
-        //print_r($quba->get_question_attempt($latestslot));
-        //echo '</pre>';
+        //$url = new moodle_url('/local/qtracker/view.php', array('courseid' => $COURSE->id));
+        //$this->content->footer = html_writer::link($url, "View issues...");
 
-        // question_usages : question_usage_id, contextid
-
-        //$this->content->text .= $currentcontext;
         return $this->content;
     }
 }

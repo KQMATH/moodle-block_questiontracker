@@ -25,11 +25,12 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Quiz Question Tracker';
 $string['quizqtracker_quiz'] = 'Quiz Question Tracker';
-$string['quizqtracker_quiz:addinstance'] = 'Add a new Question Tracker block';
-$string['quizqtracker_quiz:myaddinstance'] = 'Add a new Question Tracker block to the My Moodle page';
+$string['quizqtracker:addinstance'] = 'Add a new Question Tracker block';
+$string['quizqtracker:myaddinstance'] = 'Add a new Question Tracker block to the My Moodle page';
 
 $string['blockstring'] = 'Block string';
 $string['descconfig'] = 'Description of the config section';
 $string['descfoo'] = 'Config description';
 $string['headerconfig'] = 'Config section header';
 $string['labelfoo'] = 'Config label';
+$string['question_problem_details'] = 'If you have feedback for a question, please fill in the form below.';

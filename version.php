@@ -23,7 +23,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2020062400;
+$plugin->version = 2020091400;
 $plugin->requires = 2016120500;
 $plugin->cron = 0;
 $plugin->component = 'block_quizqtracker';
@@ -31,5 +31,5 @@ $plugin->dependencies = array(
     'mod_quiz' => ANY_VERSION,   // The Foo activity must be present (any version).
     'local_qtracker' => ANY_VERSION, // The Bar enrolment plugin version 2014020300 or higher must be present.
 );
-$plugin->maturity = MATURITY_ALPHA;
-$plugin->release = '0.0.1';
+$plugin->maturity = MATURITY_BETA;
+$plugin->release = '0.1.0';
