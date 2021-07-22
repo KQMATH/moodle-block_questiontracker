@@ -3,7 +3,7 @@
 
 :bug: Moodle Question Tracker Block plugin for Moodle Quiz
 
-**Requires** [QTracker](https://github.com/KQMATH/moodle-local_qtracker) and [Quiz](https://docs.moodle.org/en/Quiz_activity)
+**Requires** [QTracker](https://github.com/KQMATH/moodle-local_qtracker) and [Quiz](https://docs.moodle.org/en/Quiz_activity).
 
 This plugin creates a block to be added to [Quiz](https://docs.moodle.org/en/Quiz_activity) activities in order to provide an interface to [QTracker](https://github.com/KQMATH/moodle-local_qtracker).
 
